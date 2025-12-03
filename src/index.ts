@@ -6,11 +6,11 @@ declare global {
   }
 }
 
-customElements.define("weather-forecast-extended-card", WeatherForecastExtended);
+customElements.define("weather-banner", WeatherForecastExtended);
 
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: "weather-forecast-extended-card",
-  name: "Weather Forecast Extended",
-  description: "Weather forecast similar to the default HA card, but with some additional information",
+  type: "weather-banner",
+  name: "Weather Banner",
+  description: "Weather banner with time display and configurable subtitle",
 });

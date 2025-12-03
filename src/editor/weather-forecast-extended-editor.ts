@@ -154,7 +154,7 @@ export class WeatherForecastExtendedEditor extends LitElement implements Lovelac
     this._chipTypes = this._buildChipTypeState(normalizedChips);
 
     this._config = {
-      type: "custom:weather-forecast-extended-card",
+      type: "custom:weather-banner",
       ...config,
       show_header: config.show_header ?? true,
       hourly_forecast: config.hourly_forecast ?? true,
@@ -644,7 +644,7 @@ export class WeatherForecastExtendedEditor extends LitElement implements Lovelac
     const updated: WeatherForecastExtendedConfig = {
       ...this._config,
       ...changes,
-      type: "custom:weather-forecast-extended-card",
+      type: "custom:weather-banner",
     };
 
     const normalizedChips = this._normalizeHeaderChips(updated);

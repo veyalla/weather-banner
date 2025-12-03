@@ -15,6 +15,7 @@ import "./components/wfe-hourly-list";
 import { enableMomentumScroll } from "./utils/momentum-scroll";
 import type { HassEntity } from "home-assistant-js-websocket";
 import SunCalc from "suncalc";
+import { formatTime } from "./date-time";
 
 const MISSING_ATTRIBUTE_TEXT = "missing";
 
@@ -68,9 +69,13 @@ export class WeatherForecastExtended extends LitElement {
   @state() private _dailyGap?: number;
   @state() private _hourlyGap?: number;
   @state() private _templateChipValues: Record<number, { display: string; missing: boolean }> = {};
+  @state() private _currentTime: Date = new Date();
+  @state() private _subtitleValue?: string;
 
   // private property
   private _subscriptions: SubscriptionMap = { hourly: undefined, daily: undefined };
+  private _clockInterval?: ReturnType<typeof setInterval>;
+  private _subtitleSubscription?: Promise<HassUnsubscribeFunc>;
   private _resizeObserver?: ResizeObserver;
   private _oldContainerWidth?: number;
   private _hourlyMinTemp?: number;
@@ -95,7 +100,7 @@ export class WeatherForecastExtended extends LitElement {
     const normalizedHourlyMinGap = this._normalizeMinGapValue(config.hourly_min_gap);
 
     const defaults: WeatherForecastExtendedConfig = {
-      type: "custom:weather-forecast-extended-card",
+      type: "custom:weather-banner",
       ...config,
       show_header: config.show_header ?? true,
       hourly_forecast: config.hourly_forecast ?? true,
@@ -340,6 +345,84 @@ export class WeatherForecastExtended extends LitElement {
     this._templateChipValues = rest;
   }
 
+  private _refreshSubtitleSubscription() {
+    if (!this.isConnected || !this._config || !this._hass?.connection) {
+      this._teardownSubtitleSubscription(!this.isConnected);
+      return;
+    }
+
+    const template = this._config.header_subtitle_template?.trim();
+    if (!template) {
+      this._teardownSubtitleSubscription(true);
+      return;
+    }
+
+    // Tear down existing subscription before creating new one
+    this._teardownSubtitleSubscription(false);
+
+    const connection = this._hass.connection;
+    this._subtitleSubscription = connection
+      .subscribeMessage<RenderTemplateEventMessage>(
+        message => this._handleSubtitleResult(message),
+        {
+          type: "render_template",
+          template,
+          strict: true,
+          report_errors: true,
+        },
+      )
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error("weather-forecast-extended: subtitle template subscription failed", error);
+        this._subtitleValue = undefined;
+        return undefined;
+      });
+  }
+
+  private _teardownSubtitleSubscription(clearValue: boolean) {
+    this._subtitleSubscription?.then(unsub => {
+      if (typeof unsub === "function") {
+        unsub();
+      }
+    }).catch(() => undefined);
+    this._subtitleSubscription = undefined;
+
+    if (clearValue) {
+      this._subtitleValue = undefined;
+    }
+  }
+
+  private _handleSubtitleResult(message: RenderTemplateEventMessage) {
+    if (message?.error) {
+      this._subtitleValue = undefined;
+      return;
+    }
+
+    const raw = message?.result;
+
+    if (raw === null || raw === undefined) {
+      this._subtitleValue = undefined;
+      return;
+    }
+
+    if (typeof raw === "string") {
+      const trimmed = raw.trim();
+      this._subtitleValue = trimmed.length > 0 ? trimmed : undefined;
+      return;
+    }
+
+    if (typeof raw === "number" || typeof raw === "boolean") {
+      this._subtitleValue = String(raw);
+      return;
+    }
+
+    try {
+      this._subtitleValue = JSON.stringify(raw);
+    } catch {
+      this._subtitleValue = undefined;
+    }
+  }
+
   public getGridOptions(): LovelaceGridOptions {
     if (!this._config) {
       return {
@@ -415,7 +498,7 @@ export class WeatherForecastExtended extends LitElement {
   static getStubConfig(hass: HomeAssistant): WeatherForecastExtendedConfig {
     const weatherEntity = Object.keys(hass?.states ?? {}).find(entityId => entityId.startsWith("weather."));
     return {
-      type: "custom:weather-forecast-extended-card",
+      type: "custom:weather-banner",
       entity: weatherEntity ?? "weather.home",
       header_attributes: [],
       show_header: true,
@@ -484,17 +567,29 @@ export class WeatherForecastExtended extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this._refreshTemplateSubscriptions();
+    this._refreshSubtitleSubscription();
     if (this.hasUpdated && this._config && this._hass) {
       this._subscribeForecastEvents();
     }
+    // Start clock interval for time display
+    this._currentTime = new Date();
+    this._clockInterval = setInterval(() => {
+      this._currentTime = new Date();
+    }, 1000);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this._teardownTemplateSubscriptions({ clearValues: true });
+    this._teardownSubtitleSubscription(true);
     this._unsubscribeForecastEvents();
     if (this._resizeObserver) {
       this._resizeObserver.disconnect();
+    }
+    // Clear clock interval
+    if (this._clockInterval) {
+      clearInterval(this._clockInterval);
+      this._clockInterval = undefined;
     }
     Object.values(this._momentumCleanup).forEach(cleanup => cleanup?.());
     this._momentumCleanup = {};
@@ -666,13 +761,15 @@ export class WeatherForecastExtended extends LitElement {
                   : nothing}
                 <div class="header-main">
                   <div class="temp">
-                    <span class="header-pill-text">${this._computeHeaderTemperature()}</span>
+                    <span class="header-pill-text">${this._computeCurrentTime()}</span>
                   </div>
-                  <div class="condition">
-                    <span class="header-pill-text">
-                      ${this._hass?.formatEntityState?.(this._state) || this._state.state}
-                    </span>
-                  </div>
+                  ${this._subtitleValue
+                    ? html`
+                      <div class="condition">
+                        <span class="header-pill-text">${this._subtitleValue}</span>
+                      </div>
+                    `
+                    : nothing}
                 </div>
               </div>
             </div>
@@ -752,6 +849,16 @@ export class WeatherForecastExtended extends LitElement {
       return formattedWeather;
     }
     return this._state.state || "";
+  }
+
+  // Current time formatted according to HA locale settings
+  private _computeCurrentTime(): string {
+    if (!this._hass) {
+      return "";
+    }
+    const locale = this._hass.locale as Parameters<typeof formatTime>[1];
+    const config = this._hass.config;
+    return formatTime(this._currentTime, locale, config);
   }
 
   private _isStateUnavailable(state?: string): boolean {

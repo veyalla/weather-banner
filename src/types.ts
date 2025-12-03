@@ -13,12 +13,13 @@ export interface LovelaceGridOptions {
 }
 
 export interface WeatherForecastExtendedConfig extends LovelaceCardConfig {
-  type: "custom:weather-forecast-extended-card";
+  type: "custom:weather-banner";
   entity: string;
   name?: string;
   header_temperature_entity?: string;
   header_chips?: HeaderChip[];
   header_attributes?: string[];
+  header_subtitle_template?: string;
   show_header?: boolean;
   hourly_forecast?: boolean;
   daily_forecast?: boolean;

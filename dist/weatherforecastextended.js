@@ -1454,7 +1454,7 @@ var $7p6n6 = parcelRequire("7p6n6");
 
 
 parcelRequire.register("iFK5S", function(module, exports) {
-module.exports = import("./weather-forecast-extended-editor.985b6212.js").then(()=>parcelRequire("bwZCh"));
+module.exports = import("./weather-forecast-extended-editor.6396507f.js").then(()=>parcelRequire("bwZCh"));
 
 });
 
@@ -3130,6 +3130,7 @@ const $aefd8b71d9c18f54$export$3bc24c4fed096b83 = (container)=>{
 
 
 
+
 const $e6159c9afb48cae5$var$MISSING_ATTRIBUTE_TEXT = "missing";
 const $e6159c9afb48cae5$var$isAttributeHeaderChip = (chip)=>chip.type === "attribute";
 const $e6159c9afb48cae5$var$isTemplateHeaderChip = (chip)=>chip.type === "template";
@@ -3142,7 +3143,7 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
         const normalizedDailyMinGap = this._normalizeMinGapValue(config.daily_min_gap);
         const normalizedHourlyMinGap = this._normalizeMinGapValue(config.hourly_min_gap);
         const defaults = {
-            type: "custom:weather-forecast-extended-card",
+            type: "custom:weather-banner",
             ...config,
             show_header: config.show_header ?? true,
             hourly_forecast: config.hourly_forecast ?? true,
@@ -3326,6 +3327,63 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
         const { [index]: _removed , ...rest } = this._templateChipValues;
         this._templateChipValues = rest;
     }
+    _refreshSubtitleSubscription() {
+        if (!this.isConnected || !this._config || !this._hass?.connection) {
+            this._teardownSubtitleSubscription(!this.isConnected);
+            return;
+        }
+        const template = this._config.header_subtitle_template?.trim();
+        if (!template) {
+            this._teardownSubtitleSubscription(true);
+            return;
+        }
+        // Tear down existing subscription before creating new one
+        this._teardownSubtitleSubscription(false);
+        const connection = this._hass.connection;
+        this._subtitleSubscription = connection.subscribeMessage((message)=>this._handleSubtitleResult(message), {
+            type: "render_template",
+            template: template,
+            strict: true,
+            report_errors: true
+        }).catch((error)=>{
+            // eslint-disable-next-line no-console
+            console.error("weather-forecast-extended: subtitle template subscription failed", error);
+            this._subtitleValue = undefined;
+            return undefined;
+        });
+    }
+    _teardownSubtitleSubscription(clearValue) {
+        this._subtitleSubscription?.then((unsub)=>{
+            if (typeof unsub === "function") unsub();
+        }).catch(()=>undefined);
+        this._subtitleSubscription = undefined;
+        if (clearValue) this._subtitleValue = undefined;
+    }
+    _handleSubtitleResult(message) {
+        if (message?.error) {
+            this._subtitleValue = undefined;
+            return;
+        }
+        const raw = message?.result;
+        if (raw === null || raw === undefined) {
+            this._subtitleValue = undefined;
+            return;
+        }
+        if (typeof raw === "string") {
+            const trimmed = raw.trim();
+            this._subtitleValue = trimmed.length > 0 ? trimmed : undefined;
+            return;
+        }
+        if (typeof raw === "number" || typeof raw === "boolean") {
+            this._subtitleValue = String(raw);
+            return;
+        }
+        try {
+            this._subtitleValue = JSON.stringify(raw);
+        } catch  {
+            this._subtitleValue = undefined;
+        }
+    }
     getGridOptions() {
         if (!this._config) return {
             columns: 12,
@@ -3372,7 +3430,7 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
     static getStubConfig(hass) {
         const weatherEntity = Object.keys(hass?.states ?? {}).find((entityId)=>entityId.startsWith("weather."));
         return {
-            type: "custom:weather-forecast-extended-card",
+            type: "custom:weather-banner",
             entity: weatherEntity ?? "weather.home",
             header_attributes: [],
             show_header: true,
@@ -3423,15 +3481,27 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
     connectedCallback() {
         super.connectedCallback();
         this._refreshTemplateSubscriptions();
+        this._refreshSubtitleSubscription();
         if (this.hasUpdated && this._config && this._hass) this._subscribeForecastEvents();
+        // Start clock interval for time display
+        this._currentTime = new Date();
+        this._clockInterval = setInterval(()=>{
+            this._currentTime = new Date();
+        }, 1000);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
         this._teardownTemplateSubscriptions({
             clearValues: true
         });
+        this._teardownSubtitleSubscription(true);
         this._unsubscribeForecastEvents();
         if (this._resizeObserver) this._resizeObserver.disconnect();
+        // Clear clock interval
+        if (this._clockInterval) {
+            clearInterval(this._clockInterval);
+            this._clockInterval = undefined;
+        }
         Object.values(this._momentumCleanup).forEach((cleanup)=>cleanup?.());
         this._momentumCleanup = {};
         this._momentumElement = {};
@@ -3549,13 +3619,13 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
                   ` : (0, $l56HR.nothing)}
                 <div class="header-main">
                   <div class="temp">
-                    <span class="header-pill-text">${this._computeHeaderTemperature()}</span>
+                    <span class="header-pill-text">${this._computeCurrentTime()}</span>
                   </div>
-                  <div class="condition">
-                    <span class="header-pill-text">
-                      ${this._hass?.formatEntityState?.(this._state) || this._state.state}
-                    </span>
-                  </div>
+                  ${this._subtitleValue ? (0, $l56HR.html)`
+                      <div class="condition">
+                        <span class="header-pill-text">${this._subtitleValue}</span>
+                      </div>
+                    ` : (0, $l56HR.nothing)}
                 </div>
               </div>
             </div>
@@ -3614,6 +3684,13 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
         const formattedWeather = this._hass?.formatEntityAttributeValue?.(this._state, "temperature");
         if (formattedWeather && typeof formattedWeather === "string") return formattedWeather;
         return this._state.state || "";
+    }
+    // Current time formatted according to HA locale settings
+    _computeCurrentTime() {
+        if (!this._hass) return "";
+        const locale = this._hass.locale;
+        const config = this._hass.config;
+        return (0, $2e3b0c24d7649e32$export$3203edd9e5edd663)(this._currentTime, locale, config);
     }
     _isStateUnavailable(state) {
         if (!state) return true;
@@ -3863,6 +3940,7 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
     constructor(...args){
         super(...args);
         this._templateChipValues = {};
+        this._currentTime = new Date();
         // private property
         this._subscriptions = {
             hourly: undefined,
@@ -3909,14 +3987,20 @@ class $e6159c9afb48cae5$export$53427b5d95bebd88 extends (0, $eGUNk.LitElement) {
 (0, $39J5i.__decorate)([
     (0, $pklEb.state)()
 ], $e6159c9afb48cae5$export$53427b5d95bebd88.prototype, "_templateChipValues", void 0);
+(0, $39J5i.__decorate)([
+    (0, $pklEb.state)()
+], $e6159c9afb48cae5$export$53427b5d95bebd88.prototype, "_currentTime", void 0);
+(0, $39J5i.__decorate)([
+    (0, $pklEb.state)()
+], $e6159c9afb48cae5$export$53427b5d95bebd88.prototype, "_subtitleValue", void 0);
 
 
-customElements.define("weather-forecast-extended-card", (0, $e6159c9afb48cae5$export$53427b5d95bebd88));
+customElements.define("weather-banner", (0, $e6159c9afb48cae5$export$53427b5d95bebd88));
 window.customCards = window.customCards || [];
 window.customCards.push({
-    type: "weather-forecast-extended-card",
-    name: "Weather Forecast Extended",
-    description: "Weather forecast similar to the default HA card, but with some additional information"
+    type: "weather-banner",
+    name: "Weather Banner",
+    description: "Weather banner with time display and configurable subtitle"
 });
 
 
