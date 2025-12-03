@@ -47,6 +47,7 @@ ha-card {
 
 .weather .header-main {
   margin-left: auto;
+  margin-top: -12px;
   padding-left: var(--wfe-header-columns-gap, 16px);
   display: flex;
   flex-direction: column;
@@ -102,7 +103,7 @@ ha-card {
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   overflow: hidden;
 }
 
@@ -114,7 +115,7 @@ ha-card {
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   overflow: hidden;
 }
 
