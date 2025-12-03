@@ -4,6 +4,8 @@ ha-card {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Inherit theme font family */
+  font-family: var(--ha-font-family, var(--paper-font-body1_-_font-family, inherit));
 }
 
 .weather {
