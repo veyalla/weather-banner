@@ -51,14 +51,14 @@ ha-card {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   gap: 0;
-  align-self: center;
+  align-self: flex-start;
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
   /* Combined pill styling */
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.45);
   border-radius: 100px;
   padding: 8px 20px;
 }
