@@ -50,13 +50,17 @@ ha-card {
   padding-left: var(--wfe-header-columns-gap, 16px);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: var(--wfe-header-main-gap, 10px);
-  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  align-self: center;
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
+  /* Combined pill styling */
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 100px;
+  padding: 8px 20px;
 }
 
 .weather .header-attributes {
@@ -91,11 +95,9 @@ ha-card {
 }
 
 .weather .condition {
-  font-size: var(--ha-font-size-xl);
-  line-height: calc(10px + var(--ha-font-size-xl));
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 4px 15px;
-  border-radius: 100px;
+  font-size: var(--ha-font-size-m);
+  line-height: calc(6px + var(--ha-font-size-m));
+  opacity: 0.85;
   max-width: 100%;
   min-width: 0;
   display: inline-flex;
@@ -108,9 +110,6 @@ ha-card {
   font-size: var(--ha-font-size-5xl);
   line-height: calc(10px + var(--ha-font-size-5xl));
   font-weight: bolder;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 2px 17px;
-  border-radius: 100px;
   max-width: 100%;
   min-width: 0;
   display: inline-flex;
