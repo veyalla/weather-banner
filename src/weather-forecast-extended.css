@@ -47,21 +47,22 @@ ha-card {
 
 .weather .header-main {
   margin-left: auto;
-  margin-top: 0;
+  margin-top: auto;
   padding-left: var(--wfe-header-columns-gap, 16px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
   gap: 0;
-  align-self: flex-start;
+  align-self: flex-end;
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
-  /* Combined pill styling */
-  background-color: rgba(0, 0, 0, 0.45);
-  border-radius: 100px;
-  padding: 8px 20px;
+  /* Diffused background glow instead of pill */
+  padding: 12px 20px;
+  border-radius: 8px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 40%, transparent 70%);
+  box-shadow: 0 0 40px 20px rgba(0, 0, 0, 0.3);
 }
 
 .weather .header-attributes {
