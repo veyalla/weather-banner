@@ -47,14 +47,13 @@ ha-card {
 
 .weather .header-main {
   margin-left: auto;
-  margin-top: auto;
   padding-left: var(--wfe-header-columns-gap, 16px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
   gap: 0;
-  align-self: flex-end;
+  align-self: center;
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
