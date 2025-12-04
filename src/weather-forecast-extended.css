@@ -50,10 +50,10 @@ ha-card {
   padding-left: var(--wfe-header-columns-gap, 16px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: flex-end;
   gap: 0;
-  align-self: center;
+  align-self: flex-end;
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
@@ -73,10 +73,10 @@ ha-card {
 .weather .header-weather {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: flex-start;
   gap: 0;
-  align-self: center;
+  align-self: flex-end;
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
