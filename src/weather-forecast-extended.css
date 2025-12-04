@@ -33,7 +33,7 @@ ha-card {
 .weather .header-content {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: flex-end;
   justify-content: flex-start;
   padding-block: var(--wfe-header-padding-block, 16px);
   padding-inline: var(--wfe-header-padding-inline, 16px);
