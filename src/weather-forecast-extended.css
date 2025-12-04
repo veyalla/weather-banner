@@ -57,7 +57,7 @@ ha-card {
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
-  padding: 24px 32px;
+  padding: 24px 32px 8px 32px;
   position: relative;
 }
 
@@ -80,7 +80,7 @@ ha-card {
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
-  padding: 24px 32px;
+  padding: 24px 32px 8px 32px;
   position: relative;
 }
 
