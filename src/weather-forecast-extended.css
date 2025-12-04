@@ -70,6 +70,60 @@ ha-card {
   z-index: -1;
 }
 
+.weather .header-weather {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0;
+  align-self: center;
+  min-height: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 24px 32px;
+  position: relative;
+}
+
+.weather .header-weather::before {
+  content: "";
+  position: absolute;
+  inset: -20px -30px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.weather .weather-temp {
+  font-size: calc(var(--ha-font-size-5xl) * 1.2);
+  line-height: calc(10px + var(--ha-font-size-5xl) * 1.2);
+  font-weight: bolder;
+  max-width: 100%;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 70%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.weather .weather-condition {
+  font-size: calc(var(--ha-font-size-m) * 1.2);
+  line-height: calc(6px + var(--ha-font-size-m) * 1.2);
+  max-width: 100%;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 70%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .weather .header-attributes {
   display: flex;
   flex-direction: column;

@@ -737,28 +737,14 @@ export class WeatherForecastExtended extends LitElement {
               style=${`background-image: url(${this._getWeatherBgImage(this._state.state)})`}
             >
               <div class="header-content">
-                ${headerChips.length
-                  ? html`
-                    <div class="header-attributes">
-                      ${headerChips.map(chip => {
-                        const chipClassMap = {
-                          "attribute-chip": true,
-                          missing: chip.missing,
-                          "template-chip": chip.type === "template",
-                        };
-                        const chipTitle = chip.tooltip || `${chip.label}: ${chip.display}`;
-                        return html`
-                          <div
-                            class=${classMap(chipClassMap)}
-                            title=${chipTitle}
-                          >
-                            <span class="header-pill-text">${chip.display}</span>
-                          </div>
-                        `;
-                      })}
-                    </div>
-                  `
-                  : nothing}
+                <div class="header-weather">
+                  <div class="weather-temp">
+                    <span class="header-pill-text">${this._computeHeaderTemperature()}</span>
+                  </div>
+                  <div class="weather-condition">
+                    <span class="header-pill-text">${this._computeWeatherCondition()}</span>
+                  </div>
+                </div>
                 <div class="header-main">
                   <div class="temp">
                     <span class="header-pill-text">${this._computeCurrentTime()}</span>
@@ -859,6 +845,29 @@ export class WeatherForecastExtended extends LitElement {
     const locale = this._hass.locale as Parameters<typeof formatTime>[1];
     const config = this._hass.config;
     return formatTime(this._currentTime, locale, config);
+  }
+
+  // Weather condition from entity state, formatted nicely
+  private _computeWeatherCondition(): string {
+    if (!this._hass || !this._state) {
+      return "";
+    }
+
+    const condition = this._state.state;
+    if (!condition || this._isStateUnavailable(condition)) {
+      return "";
+    }
+
+    // Try to get localized condition from HA
+    const localized = this._hass.localize?.(`component.weather.entity_component._.state.${condition}`);
+    if (localized) {
+      return localized;
+    }
+
+    // Fallback: capitalize and replace hyphens/underscores
+    return condition
+      .replace(/[-_]/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
   private _isStateUnavailable(state?: string): boolean {
