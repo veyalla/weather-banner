@@ -57,7 +57,17 @@ ha-card {
   min-height: 0;
   flex: 0 1 auto;
   min-width: 0;
-  padding: 16px 20px;
+  padding: 24px 32px;
+  position: relative;
+}
+
+.weather .header-main::before {
+  content: "";
+  position: absolute;
+  inset: -20px -30px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .weather .header-attributes {
@@ -101,7 +111,7 @@ ha-card {
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+  text-shadow: none;
 }
 
 .weather .temp {
@@ -114,7 +124,7 @@ ha-card {
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  text-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+  text-shadow: none;
 }
 
 .weather .header-pill-text {
