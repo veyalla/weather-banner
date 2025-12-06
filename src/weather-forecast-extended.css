@@ -66,7 +66,7 @@ ha-card {
   content: "";
   position: absolute;
   inset: -20px -30px;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 80%);
   pointer-events: none;
   z-index: -1;
 }
@@ -89,7 +89,7 @@ ha-card {
   content: "";
   position: absolute;
   inset: -20px -30px;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 80%);
   pointer-events: none;
   z-index: -1;
 }
@@ -219,31 +219,33 @@ ha-card {
   border-radius: 2px;
 }
 
-.forecast-container.orientation-vertical > .forecast-divider {
+.forecast-container.orientation-vertical>.forecast-divider {
   height: 4px;
   margin: 14px 16px 4px 16px;
 }
 
-.forecast-container.orientation-horizontal > .forecast-divider {
+.forecast-container.orientation-horizontal>.forecast-divider {
   width: 4px;
   margin: 16px 0 0 0;
   flex: 0 0 4px;
   align-self: stretch;
 }
 
-.forecast-container.orientation-horizontal > .forecast-daily-container,
-.forecast-container.orientation-horizontal > .forecast-hourly-container {
+.forecast-container.orientation-horizontal>.forecast-daily-container,
+.forecast-container.orientation-horizontal>.forecast-hourly-container {
   flex: 1 1 0%;
 }
 
 .forecast-daily-container,
 .forecast-hourly-container {
-  position: relative; /* Fading overlays should be relative positioned */
+  position: relative;
+  /* Fading overlays should be relative positioned */
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  flex: 1 1 auto; /* allow growth with card height */
+  flex: 1 1 auto;
+  /* allow growth with card height */
   touch-action: pan-x;
   overscroll-behavior-x: contain;
 }
@@ -261,19 +263,17 @@ ha-card {
 .fade-left {
   left: 0;
   background: linear-gradient(to right,
-    var(--card-background-color) 0%,
-    var(--card-background-color) 2px,
-    transparent 100%
-  );
+      var(--card-background-color) 0%,
+      var(--card-background-color) 2px,
+      transparent 100%);
 }
 
 .fade-right {
   right: 0;
   background: linear-gradient(to left,
-    var(--card-background-color) 0%,
-    var(--card-background-color) 2px,
-    transparent 100%
-  );
+      var(--card-background-color) 0%,
+      var(--card-background-color) 2px,
+      transparent 100%);
 }
 
 .forecast {
@@ -285,17 +285,21 @@ ha-card {
   scroll-padding-left: var(--forecast-inline-padding);
   scroll-padding-right: var(--forecast-inline-padding);
   overflow-x: auto;
-  overflow-y: clip; /* no vertical scrolling in case of a few px overflow */
+  overflow-y: clip;
+  /* no vertical scrolling in case of a few px overflow */
   display: flex;
-  align-items: stretch; /* stretch items so they can use additional height */
+  align-items: stretch;
+  /* stretch items so they can use additional height */
   justify-content: space-around;
-  gap: var(--dynamic-gap, 20px); /* fallback */
+  gap: var(--dynamic-gap, 20px);
+  /* fallback */
   padding: 8px var(--forecast-inline-padding) 0px;
 }
 
 @supports (-webkit-touch-callout: none) {
   .forecast {
-    padding-bottom: 12px; /* a touch more space on Safari */
+    padding-bottom: 12px;
+    /* a touch more space on Safari */
   }
 }
 
@@ -352,10 +356,14 @@ ha-card {
   --day-marker-width: 40px;
 
   /* Variables used for calculations in CSS rules of "forecast-item .icon-container" */
-  --translate-content-height: 50px; /* Default value, will be set in _setTranslationContentHeight() */
-  --translate-container-height: 50px; /* Default value, will be set in _setTranslationContentHeight() */
-  --min-temp: -20; /* Default value, will be set in render() */
-  --max-temp: 50; /* Default value, will be set in render() */
+  --translate-content-height: 50px;
+  /* Default value, will be set in _setTranslationContentHeight() */
+  --translate-container-height: 50px;
+  /* Default value, will be set in _setTranslationContentHeight() */
+  --min-temp: -20;
+  /* Default value, will be set in render() */
+  --max-temp: 50;
+  /* Default value, will be set in render() */
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
@@ -384,11 +392,15 @@ ha-card {
 }
 
 .forecast {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox, Safari 18.2+, Chromium 121+ */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox, Safari 18.2+, Chromium 121+ */
 }
+
 .forecast::-webkit-scrollbar {
-    display: none;  /* Older Safari and Chromium */
+  display: none;
+  /* Older Safari and Chromium */
 }
 
 .forecast-item {
@@ -424,7 +436,8 @@ ha-card {
   z-index: 3;
   scroll-snap-align: none;
   width: var(--day-marker-width);
-  margin-right: calc(var(--day-marker-width) * -1 - var(--dynamic-gap) / 2); /* Fallback if round() not available */
+  margin-right: calc(var(--day-marker-width) * -1 - var(--dynamic-gap) / 2);
+  /* Fallback if round() not available */
   margin-right: calc(round(up, var(--day-marker-width) * -1 - var(--dynamic-gap) / 2, 1px));
   margin-left: calc(var(--dynamic-gap) * -1 / 2);
 }
@@ -513,7 +526,7 @@ ha-card {
   color: var(--red-color, #f44336);
 }
 
-.forecast.daily .forecast-item > .precipitation {
+.forecast.daily .forecast-item>.precipitation {
   line-height: 18px;
 }
 
@@ -529,18 +542,29 @@ ha-card {
 }
 
 /* Ensure the first two text rows don't overlap and size to their content */
-.forecast.daily .forecast-item > .date,
-.forecast.daily .forecast-item > .day-of-month,
-.forecast.daily .forecast-item > .precipitation,
-.forecast.daily .forecast-item > .precipitationprobability {
+.forecast.daily .forecast-item>.date,
+.forecast.daily .forecast-item>.day-of-month,
+.forecast.daily .forecast-item>.precipitation,
+.forecast.daily .forecast-item>.precipitationprobability {
   min-height: auto;
 }
 
-.forecast.daily .forecast-item > .date { grid-row: 1; }
-.forecast.daily .forecast-item > .day-of-month { grid-row: 2; }
-.forecast.daily .forecast-item > .translate-container { grid-row: 3; }
-.forecast.daily .forecast-item > .precipitation,
-.forecast.daily .forecast-item > .precipitationprobability { grid-row: 4; }
+.forecast.daily .forecast-item>.date {
+  grid-row: 1;
+}
+
+.forecast.daily .forecast-item>.day-of-month {
+  grid-row: 2;
+}
+
+.forecast.daily .forecast-item>.translate-container {
+  grid-row: 3;
+}
+
+.forecast.daily .forecast-item>.precipitation,
+.forecast.daily .forecast-item>.precipitationprobability {
+  grid-row: 4;
+}
 
 .forecast.daily .precipitationprobability {
   display: none;
@@ -553,11 +577,12 @@ ha-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* avoid centering which can clip bottom text in Safari */
+  justify-content: flex-start;
+  /* avoid centering which can clip bottom text in Safari */
 }
 
 /* Ensure daily main area has at least some height even when all rows are content-sized */
-.forecast.daily .forecast-item > .translate-container {
+.forecast.daily .forecast-item>.translate-container {
   min-height: 80px;
 }
 
@@ -573,21 +598,27 @@ ha-card {
 
 .forecast.hourly .forecast-item .icon-container {
   /* Vertically icon translation based on temperature for hourly forecast */
-  --item-temp: 0; /* Correct value will be set in render */
+  --item-temp: 0;
+  /* Correct value will be set in render */
   --max-translation: calc((var(--translate-container-height) - var(--translate-content-height)) / 2);
   --percentual-translation: calc((var(--item-temp) - var(--min-temp)) / (var(--max-temp) - var(--min-temp)));
   transform: translateY(calc(var(--max-translation) - (var(--percentual-translation) * 2*var(--max-translation))));
 }
 
-.forecast.daily .forecast-item .icon-container { flex: 0 0 auto; }
-.forecast.daily .temperature-bar { flex: 1 1 auto; }
+.forecast.daily .forecast-item .icon-container {
+  flex: 0 0 auto;
+}
+
+.forecast.daily .temperature-bar {
+  flex: 1 1 auto;
+}
 
 .forecast-image-icon {
   display: flex;
   justify-content: center;
 }
 
-.forecast-image-icon > * {
+.forecast-image-icon>* {
   width: var(--icon-size);
   height: var(--icon-size);
 }
@@ -596,18 +627,23 @@ ha-card {
 .rain {
   fill: var(--weather-icon-rain-color, #30b3ff);
 }
+
 .sun {
   fill: var(--weather-icon-sun-color, #fdd93c);
 }
+
 .moon {
   fill: var(--weather-icon-moon-color, #fcf497);
 }
+
 .cloud-back {
   fill: var(--weather-icon-cloud-back-color, #d4d4d4);
 }
+
 .cloud-front {
   fill: var(--weather-icon-cloud-front-color, #f9f9f9);
 }
+
 .snow {
   fill: var(--weather-icon-snow-color, #f9f9f9);
   stroke: var(--weather-icon-snow-stroke-color, #d4d4d4);
