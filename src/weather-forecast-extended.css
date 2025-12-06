@@ -104,10 +104,8 @@ ha-card {
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 70%, rgba(255, 255, 255, 0.7) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .weather .weather-condition {
@@ -119,10 +117,8 @@ ha-card {
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 70%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .weather .header-attributes {
@@ -165,10 +161,8 @@ ha-card {
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 70%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .weather .temp {
@@ -181,10 +175,8 @@ ha-card {
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 70%, rgba(255, 255, 255, 0.7) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .weather .header-pill-text {
